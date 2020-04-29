@@ -1,4 +1,15 @@
 
+# Next POC
+
+## Goals
+
+[ ] Investigate next to build applications
+[x] Styled using styled-components
+[x] Server render the stylesheet and inject it to speed things up
+[x] Style using `@raid/basic-kit`
+[x] Dynamic routing to add client and server renders
+[ ] Only fetch when the data is not already available
+
 ## styled-components
 
 Pain in the nuts is what this is.

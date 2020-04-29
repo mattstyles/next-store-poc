@@ -40,6 +40,20 @@ Links are the next pain in the arse, but they are, thankfully, easier to deal wi
 
 ## Client and server loading
 
-`getInitialProps` will always attempt to load the data and so can be used for client or server routing, which means you can use it to fetch data when navigating directly to a page, or via an in-app navigation.
+`getInitialProps` will always attempt to load the data and so can be used for client or server routing, which means you can use it to fetch data when navigating directly to a page, or via an in-app navigation. But seems to be deprecated?
 
-@TODO how to only fetch data if we don't already have it?
+We **can** get to the desirable situation where we prefetch data that SWR can use to render immediately, but also fetch on the client in the case of stale data.
+
+There are 3 examples set up here:
+
+* `people` route, which only uses `getInitialProps`
+* `films` route, which only use `getServerSideProps`
+* `ships` route, which uses `getInitialProps` to seed `swr`
+
+`getInitialProps` will run on the server or the client, but always runs _before_ the navigation event, so, if the api is slow, the page will be slow.
+
+`getServerSideProps` also always runs _before_ the navigation, and asks the server to always do the work. Choosing between `getInitialProps` and `getServerSideProps` seems to be limited to _where_ you want the work to happen, depending on cache strategy vs costs would dictate this.
+
+The `ships` route is a good performance hit where it uses data we have already fetched to make page load near instantaneous whilst also using `swr` to check the staleness of the data and update where necessary which is a nice-to-have in many situations.
+
+`react-query` allows consumers to specify a key to load against, which might be preferable when a search route fetches all data for item routes giving the app a nice situation where item routes are near instantaneous (as the previous client search operation has already fetched all the data) but are also server-rendered with data when hit directly.

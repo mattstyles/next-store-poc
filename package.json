@@ -5,9 +5,9 @@
   "author": "Matt Styles <matt@personalurban.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "next",
+    "dev": "node start.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node start.js start",
     "analyse": "ANALYSE=true yarn build"
   },
   "dependencies": {
@@ -30,8 +30,10 @@
     "@zeit/next-preact": "^0.1.1-canary.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-styled-components": "^1.10.7",
+    "module-alias": "^2.2.2",
     "next": "^9.3.6",
     "next-compose-plugins": "^2.2.0",
+    "preact-render-to-string": "^5.1.6",
     "standard": "^14.3.3"
   }
 }

@@ -26,6 +26,8 @@ const Ship = ({
   const router = useRouter()
   const { id } = router.query
 
+  console.log('initial:', initialData)
+
   const { data, error } = useSWR(endpoint(id), get, { initialData })
 
   if (!data) {
@@ -54,6 +56,8 @@ const Ship = ({
 
 export async function getInitialProps (ctx) {
   const result = await get(endpoint(ctx.query.id))
+
+  console.log('initial prop result', result)
 
   return {
     data: result

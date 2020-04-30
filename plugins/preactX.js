@@ -1,4 +1,6 @@
 
+const preactModules = /[\\/]node_modules[\\/](preact|preact-render-to-string|preact-context-provider)[\\/]/
+
 /**
  * `enabled` flag allows supporting react in dev, preact in prod.
  * if enabled and in dev mode, then preact will load debug/devtools.
@@ -14,6 +16,24 @@ const withPreactX = ({
   return Object.assign({}, nextConfig, {
     webpack (config, options) {
       if (enabled) {
+        // Chunk split config
+        const splitChunks = config.optimization && config.optimization.splitChunks
+        if (splitChunks) {
+          const cacheGroups = splitChunks.cacheGroups
+          if (cacheGroups.framework) {
+            cacheGroups.preact = Object.assign({}, cacheGroups.framework, {
+              test: preactModules
+            })
+            cacheGroups.commons.name = 'framework'
+          } else {
+            cacheGroups.preact = {
+              name: 'commons',
+              chunks: 'all',
+              test: preactModules
+            }
+          }
+        }
+
         // Preact aliases
         config.resolve.alias = Object.assign({}, config.resolve.alias, {
           react: 'preact/compat',

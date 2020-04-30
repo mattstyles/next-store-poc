@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "analyse": "ANALYZE=true yarn build"
   },
   "dependencies": {
     "@raid/basic-kit": "^0.16.1",
@@ -15,7 +16,6 @@
     "@styled-system/css": "^5.1.5",
     "@styled-system/theme-get": "^5.1.2",
     "bent": "^7.3.0",
-    "next": "^9.3.6",
     "raid": "^5.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -24,8 +24,10 @@
     "swr": "^0.2.0"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^9.3.6",
     "babel-eslint": "^10.1.0",
     "babel-plugin-styled-components": "^1.10.7",
+    "next": "^9.3.6",
     "standard": "^14.3.3"
   }
 }

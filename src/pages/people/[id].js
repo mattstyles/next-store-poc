@@ -1,5 +1,5 @@
 
-import { Box, H1, H2, Text } from '@raid/basic-kit'
+import { Box, H1, H2, P, Code, Text } from '@raid/basic-kit'
 import bent from 'bent'
 
 import { Link } from '../../components/link'
@@ -23,6 +23,7 @@ const endpoint = id => `/api/test?id=${id || 1}`
 const People = ({
   data
 }) => {
+  //  This will never get run as `getInitialProps` always runs first.
   if (!data) {
     return (
       <Box>
@@ -33,9 +34,10 @@ const People = ({
 
   return (
     <Box>
-      <H1>About</H1>
+      <H1>People</H1>
       <H2>{data.name}</H2>
-      <Text as='p'>Some text, go to <Link href='/'>Index</Link></Text>
+      <P>Some text, go to <Link href='/'>Index</Link></P>
+      <P>These routes use <Code>getInitialProps</Code>, which always runs <em>before</em> the page is navigated to (either on the server or on the client).</P>
     </Box>
   )
 }

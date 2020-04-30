@@ -1,5 +1,5 @@
 
-import { Box, H2, Text } from '@raid/basic-kit'
+import { Box, H1, H2, P, Code } from '@raid/basic-kit'
 import { useRouter } from 'next/router'
 import bent from 'bent'
 
@@ -30,8 +30,9 @@ const Film = ({
 
   return (
     <Box>
-      <H2>{`Film: ${id}`}</H2>
-      <Text>{data.name}</Text>
+      <H1>{`Film: ${id}`}</H1>
+      <H2>{data.name}</H2>
+      <P>Route uses <Code>getServerSideProps</Code> always run <em>before</em> the page render but runs on the server and not the client.</P>
     </Box>
   )
 }

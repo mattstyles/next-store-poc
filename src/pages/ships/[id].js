@@ -1,10 +1,10 @@
 
-import { Box, H2, Text } from '@raid/basic-kit'
+import { Box, H1, H2, Text, P, Code } from '@raid/basic-kit'
 import { useRouter } from 'next/router'
 import bent from 'bent'
 import useSWR from 'swr'
 
-const get = bent('json', 'http://localhost:3001')
+const get = bent('json', 'http://localhost:3000')
 const endpoint = id => `/api/test?id=${id || 1}`
 
 /**
@@ -77,8 +77,9 @@ const Ship = ({
 
   return (
     <Box sx={{ mt: 4 }}>
-      <H2>{`Ship: ${id}`}</H2>
-      <Text>{data.name}</Text>
+      <H1>{`Ship: ${id}`}</H1>
+      <H2>{data.name}</H2>
+      <P>Route uses <Code>SWR</Code> combined with <Code>getInitialProps</Code> to allow using server-rendered data when available and use SWR to cache a response for faster later navigation.</P>
     </Box>
   )
 }

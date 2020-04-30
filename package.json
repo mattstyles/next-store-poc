@@ -5,7 +5,8 @@
   "author": "Matt Styles <matt@personalurban.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "node start.js",
+    "_dev": "node start.js",
+    "dev": "next",
     "build": "next build",
     "start": "NODE_ENV=production node start.js start",
     "analyse": "ANALYSE=true yarn build"

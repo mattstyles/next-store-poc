@@ -11,7 +11,7 @@ export default async (req, res) => {
     query: { id }
   } = req
 
-  await delay(1000)
+  await delay(300)
   const result = await get(endpoint(id || 1))
 
   res.setHeader('Content-Type', 'application/json')

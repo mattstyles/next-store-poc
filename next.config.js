@@ -14,7 +14,7 @@ const nextConfig = {}
 module.exports = compose(
   [
     withAnalyser,
-    withPreact
+    // withPreact
   ],
   nextConfig
 )

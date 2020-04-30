@@ -22,9 +22,9 @@ const Main = ({ Component, pageProps }) => {
             <Link href='/about'>About</Link>
             <Link href='/people/[id]' as='/people/1'>People 1</Link>
             <Link href='/people/[id]' as='/people/2'>People 2</Link>
-            <Link href='/films/[id]' as='/films/1' shallow>Film 1</Link>
+            <Link href='/films/[id]' as='/films/1'>Film 1</Link>
             <Link href='/films/[id]' as='/films/2'>Film 2</Link>
-            <Link href='/ships/[id]' as='/ships/1' shallow>Ship 1</Link>
+            <Link href='/ships/[id]' as='/ships/1'>Ship 1</Link>
             <Link href='/ships/[id]' as='/ships/2'>Ship 2</Link>
           </Spread>
         </header>

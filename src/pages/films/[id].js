@@ -37,7 +37,6 @@ const Film = ({
 }
 
 export async function getServerSideProps (ctx) {
-  console.log('server:', ctx.query.id)
   const result = await get(endpoint(ctx.query.id))
 
   return {

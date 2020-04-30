@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import bent from 'bent'
 import useSWR from 'swr'
 
-const get = bent('json', 'http://localhost:3000')
+const get = bent('json', 'http://localhost:3001')
 const endpoint = id => `/api/test?id=${id || 1}`
 
 /**
@@ -17,18 +17,47 @@ const endpoint = id => `/api/test?id=${id || 1}`
  * requirements.
  *
  * @TODO minor, a load indicator when fetching to check on stale data would
- * be good, and reasonably easy to add I think.
+ * be good, and reasonably easy to add I think. see `isValidating` which is
+ * returned from hte useSWR hook.
  */
 
+// This function is only necessary to add some logging, normally just
+// supplying `get` to SWR is fine.
+const fetch = async url => {
+  console.log('[SWR]/fetching', url)
+  const response = await get(url)
+  console.log('[SWR]/returning', response)
+  return response
+}
+
+// Initial data will **only** be from the server, but, in this case, if a
+// parent did supply it then things would work just the same.
 const Ship = ({
   data: initialData
 }) => {
   const router = useRouter()
   const { id } = router.query
 
-  console.log('initial:', initialData)
+  // Supplying initialData has an odd side-effect, when this is supplied
+  // SWR will not run at all. This will often be fine but it means that if
+  // you navigate away and then back, SWR will have no cache and so will have
+  // no data and will trigger a loading state even though we have already
+  // fetched the data. Omitting it forces SWR to run (which fills the cache)
+  // and the following `data = initital` line gives the component data with
+  // which to render.
+  let { data, error } = useSWR(
+    endpoint(id),
+    fetch
+    // { initialData }
+  )
 
-  const { data, error } = useSWR(endpoint(id), get, { initialData })
+  // This hydrates data _if_ it is already supplied, SWR will still run and
+  // will update if initialData is stale
+  if (initialData) {
+    data = initialData
+  }
+
+  console.log('Rendering with data', { data }, { initialData })
 
   if (!data) {
     return (
@@ -54,14 +83,51 @@ const Ship = ({
   )
 }
 
-export async function getInitialProps (ctx) {
-  const result = await get(endpoint(ctx.query.id))
+// const cache = {}
 
-  console.log('initial prop result', result)
+Ship.getInitialProps = async (ctx) => {
+  console.log('[ship/initial]/ctx', ctx)
+  const id = ctx.query.id
+
+  // Caching can be good here, but, this will cache on server hits too which
+  // may or may no be desirable, and SWR has a cache anyway for client stuff.
+  // If using, be sure to store the data in the cache after fetching later.
+  // If using, use a proper cache, not this stray object cache(!)
+  // if (cache[id]) {
+  //   console.log('[ship/initial]/cache', cache[id])
+  //   return {
+  //     data: cache[id]
+  //   }
+  // }
+
+  console.log(`I am running on a ${typeof window === 'undefined' ? 'srver' : 'client'} hit`)
+
+  // ctx.req is server only, similar to typeof window === 'undefined'
+  if (!ctx.req) {
+    return { data: null }
+  }
+
+  const result = await get(endpoint(id))
+  console.log('[ship/initial]/response', id, result)
+  // cache[id] = result
 
   return {
     data: result
   }
 }
+
+// The above 'if server' stuff probably won't work here as this code _always_
+// runs on the server.
+// export async function getServerSideProps (ctx) {
+//   console.log('[ship/ssprops]/ctx', ctx.query.id)
+//   const result = await get(endpoint(ctx.query.id))
+//   console.log('[ship/ssprops]/response', result)
+//
+//   return {
+//     props: {
+//       data: result
+//     }
+//   }
+// }
 
 export default Ship

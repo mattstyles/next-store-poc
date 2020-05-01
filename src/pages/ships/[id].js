@@ -108,6 +108,11 @@ Ship.getInitialProps = async (ctx) => {
     return { data: null }
   }
 
+  // @TODO try swr `mutate` to pull from an SWR cache if possible, or run the
+  // and fill that cache (which would allow supplying initialData to SWR and
+  // avoid loading the data twice in quick succession, once on server and
+  // once on the client).
+
   const result = await get(endpoint(id))
   console.log('[ship/initial]/response', id, result)
   // cache[id] = result

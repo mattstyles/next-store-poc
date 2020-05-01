@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { css } from '@styled-system/css'
 import { themeGet } from '@styled-system/theme-get'
 import { sx } from '@raid/ui-core'
-import { Box } from '@raid/basic-kit'
+import { Box, Flex } from '@raid/basic-kit'
 
 // Copied from core utils within basic-kit
 const map = _ => f => {
@@ -29,3 +29,15 @@ export const Layout = styled(Box)(
   },
   sx
 )
+
+export const FullLayout = styled(Flex)(
+  css({
+    width: ['100vw', '60rem'],
+    height: '100vh',
+    mx: 'auto'
+  }),
+  sx
+)
+FullLayout.defaultProps = {
+  row: true
+}

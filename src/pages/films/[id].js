@@ -38,6 +38,7 @@ const Film = ({
 }
 
 export async function getServerSideProps (ctx) {
+  // Should always check ctx validity
   const result = await get(endpoint(ctx.query.id))
 
   return {

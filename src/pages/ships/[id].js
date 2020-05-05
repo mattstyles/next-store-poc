@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import bent from 'bent'
 import useSWR from 'swr'
 
-const get = bent('json', 'http://localhost:3000')
+const get = bent('json', 'http://localhost:3001')
 const endpoint = id => `/api/test?id=${id || 1}`
 
 /**
@@ -45,17 +45,17 @@ const Ship = ({
   // fetched the data. Omitting it forces SWR to run (which fills the cache)
   // and the following `data = initital` line gives the component data with
   // which to render.
-  let { data, error } = useSWR(
+  const { data = initialData, error } = useSWR(
     endpoint(id),
-    fetch
-    // { initialData }
+    fetch,
+    initialData ? { initialData } : null
   )
 
   // This hydrates data _if_ it is already supplied, SWR will still run and
-  // will update if initialData is stale
-  if (initialData) {
-    data = initialData
-  }
+  // will update if initialData is stale. Default = assignment above also works.
+  // if (initialData) {
+  //   data = initialData
+  // }
 
   console.log('Rendering with data', { data }, { initialData })
 

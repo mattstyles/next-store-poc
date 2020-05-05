@@ -44,11 +44,12 @@ Links are the next pain in the arse, but they are, thankfully, easier to deal wi
 
 We **can** get to the desirable situation where we prefetch data that SWR can use to render immediately, but also fetch on the client in the case of stale data.
 
-There are 3 examples set up here:
+There are 4 examples set up here:
 
 * `people` route, which only uses `getInitialProps`
 * `films` route, which only use `getServerSideProps`
 * `ships` route, which uses `getInitialProps` to seed `swr`
+* `species` route, which uses `getInitialProps` to seed `react-query`
 
 `getInitialProps` will run on the server or the client, but always runs _before_ the navigation event, so, if the api is slow, the page will be slow.
 
@@ -57,3 +58,38 @@ There are 3 examples set up here:
 The `ships` route is a good performance hit where it uses data we have already fetched to make page load near instantaneous whilst also using `swr` to check the staleness of the data and update where necessary which is a nice-to-have in many situations.
 
 `react-query` allows consumers to specify a key to load against, which might be preferable when a search route fetches all data for item routes giving the app a nice situation where item routes are near instantaneous (as the previous client search operation has already fetched all the data) but are also server-rendered with data when hit directly.
+
+The outcome is that `react-query` is the _only_ way to get the desired behaviour, as it will use `initialData` to pre-fill a cache.
+
+Desired behaviour:
+* Fetch server-side and render
+* Trust server data is good and do not re-fetch (react will do a render as that is how it works, it will not result in any DOM-work, or, _should_ not)
+* Subsequent visits to the page do the stale-while-refetch or rendering first with potentially stale data but refetching and updating.
+
+This gives us performance benefits (either SSR or in-cache render) without thrashing the api (performing server hit and then client hit).
+
+`swr` and `react-query` have almost identical usage, the _most_ important bit here is:
+
+```
+const { data = initialData, error } = useSWR(
+  endpoint(id),
+  fetch,
+  initialData ? { initialData } : null
+)
+```
+
+`swr` will render using the `initialData` but it will **not** use that initialData as a seed for the cache so when you navigate back it’ll have nothing in the cache for that endpoint key so it’ll make the user wait while it fetches data.
+
+`react-query` uses the server fetched data (supplied via `initialData`) as a seed for the cache, meaning that the next visit will render immediately whilst also doing the normal staleness-check with a refetch.
+
+This gives a very good general case where using a stale-while-revalidate library is useful for rendering as fast as you can. Using the `ctx.req` hack can be removed for those situations (which is arguably most) where you want to wait _pre_ navigation before attempting the transition.
+
+This is only partially true though, it'll still try and fetch in production mode. _Sigh_. RQ at least caches that data though (you can get to this exact same situation with SWR by not populating the initialData). SWR also has less overdraw by protecting useless renders better.
+
+With a bit of manual effort over-fetching _can_ be avoided. See the `swrcache` example route. With initialData SWR will not attempt a fetch, so if you don’t want to wait for one on the next load you have to manually load up the cache, this can be done by calling `mutate` when initialData to fill that cache exists.
+
+* Use data fetched server side if available
+* Fill client cache with server-fetched data
+* Use client cache and revalidate
+
+Setting `initialData` stops over-fetching as SWR won't even try when its available. Filling the cache ensures the next hit uses potentially stale data for speed, and revalidates for eventual consistency.
